@@ -8,6 +8,8 @@
     {
         private static volatile int counter;
 
+        public static object locker = new object();
+
         public static void Main(string[] args)
         {
             // Run the operation 10 times
@@ -27,11 +29,13 @@
             var t2 = new Thread(() => Run(ConsoleColor.Yellow));
 
             var stopwatch = Stopwatch.StartNew();
+
             t1.Start();
             t2.Start();
 
             t1.Join();
             t2.Join();
+
             stopwatch.Stop();
 
             Console.ResetColor();
@@ -46,8 +50,12 @@
             {
                 Thread.Sleep(10);
 
-                counter++;
-                Console.ForegroundColor = foregroundColor;
+                lock (locker)
+                {
+                    counter++;
+                    Console.ForegroundColor = foregroundColor;
+                }
+
                 Console.WriteLine($"[Thread:{threadId}] - {counter}");
             }
         }
