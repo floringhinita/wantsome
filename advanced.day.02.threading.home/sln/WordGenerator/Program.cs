@@ -1,83 +1,83 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-
-namespace WordGenerator
+﻿namespace WordGenerator
 {
-    class Program
-    {
-        static int nrFiles = 10;
-        static int nrWordsOnEachFile = 1000000;
-        static char[] cons = new char[] { 'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z' };
-        static char[] vowel = new char[] { 'a', 'e', 'i', 'o', 'u', 'y' };
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Threading.Tasks;
 
-        static void Main(string[] args)
+    internal class Program
+    {
+        private const int NrFiles = 10;
+        private const int NrWordsOnEachFile = 1000000;
+
+        private static readonly char[] Cons =
+            {'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z'};
+
+        private static readonly char[] Vowel = {'a', 'e', 'i', 'o', 'u', 'y'};
+
+        private static void Main(string[] args)
         {
             var tl = new List<Task>();
 
-            for (int i = 0; i < nrFiles; i++)
-            {
-                tl.Add(GenerateWorkds(i));
-            }
+            for (var i = 0; i < NrFiles; i++) tl.Add(GenerateWords(i));
 
             Task.WaitAll(tl.ToArray());
 
-            Console.WriteLine("Finshed");
+            Console.WriteLine("Finished");
         }
 
-        private static Task GenerateWorkds(int fileId)
+        private static Task GenerateWords(int fileId)
         {
-            return Task.Run(()=> {
-
+            return Task.Run(() =>
+            {
                 var file = $"file.{fileId}.dat";
 
-                long nrOfWords = nrWordsOnEachFile;
+                long nrOfWords = NrWordsOnEachFile;
 
-                string[] lines = new string[nrOfWords];
+                var lines = new string[nrOfWords];
 
                 var rand = new Random(100);
 
-                for (int idx = 0; idx < nrOfWords; idx++)
-                {
-                    lines[idx] = GenerateWord(rand, rand.Next(1, 20));
-                }
+                for (var idx = 0; idx < nrOfWords; idx++) lines[idx] = GenerateWord(rand, rand.Next(1, 20));
 
                 // Write the string array to a new file named "WriteLines.txt".
-                using (StreamWriter outputFile = new StreamWriter(file))
+                using (var outputFile = new StreamWriter(file))
                 {
-                    foreach (string line in lines)
-                    {
-                        outputFile.WriteLine(line);
-                    }
+                    foreach (var line in lines) outputFile.WriteLine(line);
                 }
-
             });
         }
 
-        static string GenerateWord(Random rand, int length)
+        private static string GenerateWord(Random rand, int length)
         {
             if (length < 1) // do not allow words of zero length
                 throw new ArgumentException("Length must be greater than 0");
 
-            string word = string.Empty;
+            var word = string.Empty;
 
             if (rand.Next() % 2 == 0) // randomly choose a vowel or consonant to start the word
-                word += cons[rand.Next(0, 20)];
+            {
+                word += Cons[rand.Next(0, 20)];
+            }
             else
-                word += vowel[rand.Next(0, 4)];
+            {
+                word += Vowel[rand.Next(0, 4)];
+            }
 
-            for (int i = 1; i < length; i += 2) // the counter starts at 1 to account for the initial letter
-            { // and increments by two since we append two characters per pass
-                char c = cons[rand.Next(0, 20)];
-                char v = vowel[rand.Next(0, 4)];
+            for (var i = 1; i < length; i += 2) // the counter starts at 1 to account for the initial letter
+            {
+                // and increments by two since we append two characters per pass
+                var c = Cons[rand.Next(0, 20)];
+                var v = Vowel[rand.Next(0, 4)];
 
-                word += c.ToString() + v.ToString();
+                word += c + v.ToString();
             }
 
             // the word may be short a letter because of the way the for loop above is constructed
             if (word.Length < length) // we'll just append a random consonant if that's the case
-                word += cons[rand.Next(0, 20)];
+            {
+                word += Cons[rand.Next(0, 20)];
+            }
 
             return word;
         }
