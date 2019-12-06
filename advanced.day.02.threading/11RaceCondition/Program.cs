@@ -7,7 +7,6 @@
     internal class Program
     {
         private static volatile int counter;
-        private static object counterLock = new object();
 
         public static void Main(string[] args)
         {
