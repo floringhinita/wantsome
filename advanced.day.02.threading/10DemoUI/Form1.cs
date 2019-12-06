@@ -11,7 +11,7 @@
     public partial class Form1 : Form
     {
         private const string Path =
-            "C:\\Users\\ascutariu\\Projects\\wantsome\\wantsome-dotnet\\2. advanced\\day4\\demo\\threads\\00Data\\cars.csv";
+            @"d:\projects\wantsome\wantsome-dotnet-public\advanced.day.02.threading\cars.csv";
 
         public Form1()
         {
