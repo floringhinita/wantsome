@@ -13,27 +13,45 @@
         private const string Path =
             @"d:\projects\wantsome\wantsome-dotnet-public\advanced.day.02.threading\cars.csv";
 
+        delegate void AppendToContentDlg(string s);
+        delegate void AppendToLogDlg(string s);
+
+        AppendToContentDlg contentDlg;
+        AppendToLogDlg logDlg;
+
         public Form1()
         {
             this.InitializeComponent();
+
+            contentDlg = AppendToContent;
+            logDlg = Log;
         }
 
         private void GetDataBtn_Click(object sender, EventArgs e)
         {
             this.Log("start to process file");
+         
+            ThreadPool.QueueUserWorkItem(Callback);
+        }
 
+        public void Callback(object state)
+        {
             var cars = this.ProcessCarsFile(Path).ToList();
 
             this.DisplayCars(cars);
 
-            this.Log($"finish to process file. {cars.Count()} cars downloaded");
+            //this.Log($"finish to process file. {cars.Count()} cars downloaded");
+
+            this.logTbx.Invoke(logDlg, $"finish to process file. {cars.Count()} cars downloaded");
         }
 
         private void DisplayCars(List<Car> cars)
         {
             foreach (var car in cars)
             {
-                this.AppendToContent(car.ToString());
+                //this.AppendToContent(car.ToString());
+
+                this.contentTxb.Invoke(contentDlg, car.ToString());
             }
         }
 
@@ -60,8 +78,6 @@
         public void AppendToContent(string s)
         {
             this.contentTxb.AppendText($"{s}{Environment.NewLine}");
-
-            //Thread.Sleep(TimeSpan.FromSeconds(3)); // simulate other work
         }
     }
 }
