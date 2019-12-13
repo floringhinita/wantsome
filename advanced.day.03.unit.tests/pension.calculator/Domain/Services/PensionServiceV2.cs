@@ -25,6 +25,9 @@
         // if age > 50, return return PensionCalculationResponse.IsPensionable = true,
             //and send an email containing "welcome to pension"
 
+        // second scenarios
+            // if leap year, each person has 2 year bonus when pension is calculated 
+
         public PensionCalculationResponse Calculate(Guid personId)
         {
             var person = this.repository.Get(personId);

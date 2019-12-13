@@ -21,9 +21,12 @@
 
         //if age > 40 && age < 50, return PensionCalculationResponse.IsPensionable = false,
             //but send and email containing "at 51 you'll have pension :)"
-        
+
         // if age > 50, return return PensionCalculationResponse.IsPensionable = true,
             //and send an email containing "welcome to pension"
+
+        // second scenarios
+            // if leap year, each person has 2 year bonus when pension is calculated 
 
         public PensionCalculationResponse Calculate(Guid personId)
         {
