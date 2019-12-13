@@ -1,0 +1,57 @@
+name: DotNet Core App
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - 2. advanced/day5/demo/
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build & Publish
+  jobs:
+  - job: BuildJob
+    displayName: Build Stage
+    steps:
+    
+    - task: DotNetCoreCLI@2
+      displayName: Restore projects
+      inputs:
+        command: restore
+        projects: |
+          **/day5/demo/unit.tests**/*.csproj
+
+    - task: DotNetCoreCLI@2
+      displayName: Build projects
+      inputs:
+        command: build
+        projects: |
+          **/day5/demo/unit.tests**/*.csproj
+
+    - task: DotNetCoreCLI@2
+      displayName: Run tests
+      inputs:
+        command: test
+        #arguments: --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+        arguments: --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:threshold=80 /p:thresholdType=line /p:thresholdStat=total
+        projects: |
+          **/day5/demo/unit.tests**/UnitTests.csproj
+
+    - task: reportgenerator@4
+      displayName: Generate report
+      inputs:
+        reports: '**/coverage.cobertura.xml'
+        targetdir: 'coveragereport'
+
+    - task: PublishCodeCoverageResults@1
+      displayName: Publish code coverage
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: '**/coverage.cobertura.xml'
+        reportDirectory: 'coveragereport'
