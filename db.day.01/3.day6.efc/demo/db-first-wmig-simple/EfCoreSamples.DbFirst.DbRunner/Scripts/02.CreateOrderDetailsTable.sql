@@ -1,7 +1,4 @@
-﻿USE [StoreDB_3]
-GO
-
-CREATE TABLE [dbo].[OrderDetails](
+﻿CREATE TABLE [dbo].[OrderDetails](
 	[OrderDetailId] [int] IDENTITY(1,1) NOT NULL,
 	[OrderId] [int] NOT NULL,
 	[ProductId] [int] NOT NULL,

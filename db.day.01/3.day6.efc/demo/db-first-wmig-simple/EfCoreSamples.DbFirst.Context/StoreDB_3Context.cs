@@ -22,7 +22,7 @@ namespace EfCoreSamples.DbFirst.Context
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=EN1210001;Integrated Security=True; Initial Catalog=StoreDB_3");
+                optionsBuilder.UseSqlServer("Data Source=EN1210001;Integrated Security=True; Initial Catalog=Demo2");
             }
         }
 

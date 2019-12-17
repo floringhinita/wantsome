@@ -11,7 +11,7 @@ namespace EfCoreSamples.DbFirst.WithoutMigrations.DbRunner
         {
             var connectionString =
                     args.FirstOrDefault()
-                    ?? "Data Source = EN1210001; Integrated Security = True; Initial Catalog = StoreDB_3";
+                    ?? "Data Source = EN1210001; Integrated Security = True; Initial Catalog = Demo2";
 
             EnsureDatabase.For.SqlDatabase(connectionString);
 
