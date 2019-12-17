@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EfCoreSamples.DbFirst.Context\EfCoreSamples.DbFirst.Context.csproj" />
+    <ProjectReference Include="..\EfCoreSamples.DbFirst.Domain\EfCoreSamples.DbFirst.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
