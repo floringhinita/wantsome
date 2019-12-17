@@ -1,5 +1,6 @@
 ﻿namespace ConferencePlanner.Data
 {
+    using System.Collections.Generic;
     using Entities;
     using Microsoft.EntityFrameworkCore;
 
@@ -26,27 +27,21 @@
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Unique UserName Attendee
             // Ex1 - todo
             modelBuilder.Entity<Attendee>(a => a.HasIndex(e => e.UserName).IsUnique());
-
-            // Many-to-many: Session <-> Attendee
-//            modelBuilder.Entity<SessionAttendee>()
-//                .HasOne(sa => sa.Session)
-//                .WithMany(x => x.SessionAttendees)
-//                .HasForeignKey(x => x.Session);
-//
-//            modelBuilder.Entity<SessionAttendee>()
-//                .HasOne(sa => sa.Attendee)
-//                .WithMany(x => x.SessionsAttendees)
-//                .HasForeignKey(x => x.Attendee);
 
             modelBuilder.Entity<SessionAttendee>()
                 .HasKey(ss => new { ss.SessionId, ss.AttendeeId });
 
-            // Many-to-many: Speaker <-> Session
             modelBuilder.Entity<SessionSpeaker>()
                 .HasKey(ss => new { ss.SessionId, ss.SpeakerId });
+
+            // Ex2 here
+            modelBuilder.Entity<Track>().HasData(new List<Track>()
+            {
+                new Track {Id = 10,Name = "C#"},
+                new Track {Id = 11,Name = "PHP"},
+            });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
