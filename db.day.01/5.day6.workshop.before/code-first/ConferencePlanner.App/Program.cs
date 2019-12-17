@@ -23,6 +23,8 @@
         {
             // Todo
             // write a simple query to validate ApplicationDbContext
+
+            var sessions = context.Sessions.Where(s => s.Title.Contains(".NET")).ToList();
         }
     }
 

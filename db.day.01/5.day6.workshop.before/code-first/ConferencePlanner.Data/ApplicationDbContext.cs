@@ -28,19 +28,32 @@
         {
             // Unique UserName Attendee
             // Ex1 - todo
+            modelBuilder.Entity<Attendee>(a => a.HasIndex(e => e.UserName).IsUnique());
 
             // Many-to-many: Session <-> Attendee
-            // Ex1 - todo
+//            modelBuilder.Entity<SessionAttendee>()
+//                .HasOne(sa => sa.Session)
+//                .WithMany(x => x.SessionAttendees)
+//                .HasForeignKey(x => x.Session);
+//
+//            modelBuilder.Entity<SessionAttendee>()
+//                .HasOne(sa => sa.Attendee)
+//                .WithMany(x => x.SessionsAttendees)
+//                .HasForeignKey(x => x.Attendee);
+
+            modelBuilder.Entity<SessionAttendee>()
+                .HasKey(ss => new { ss.SessionId, ss.AttendeeId });
 
             // Many-to-many: Speaker <-> Session
-            // Ex1 - todo        
+            modelBuilder.Entity<SessionSpeaker>()
+                .HasKey(ss => new { ss.SessionId, ss.SpeakerId });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("TODO - Write Connection String");
+                optionsBuilder.UseSqlServer("Data Source=.; Integrated Security=True; Initial Catalog=ConferencePlanner;");
             }
         }
     }
