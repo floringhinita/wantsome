@@ -101,7 +101,8 @@
                 {
                     Id = x.Key,
                     Count = x.Count()
-                });
+                })
+                .ToList();
 
             // number of tracks per session
 
