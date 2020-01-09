@@ -2,6 +2,7 @@
 {
     using Moq;
     using ProductionCode.MockingExample;
+    using System;
     using Xunit;
 
 
@@ -22,12 +23,16 @@
             * Configure mock so that employee is considered working today and gets notifications via email
             *
             */
+            bobMock.Setup(x => x.IsWorkingOnDate(It.IsAny<DateTime>()))
+                .Returns(true);
 
             var employeeServiceMock = new Mock<IEmployeeService>();
             /*
             * Configure mock so to return employee from above
             *
             */
+            employeeServiceMock.Setup(x => x.GetEmployeesInNewYorkOffice())
+                .Returns(new[] { bobMock.Object });
 
             var notificationServiceMock = new Mock<INotificationService>();
 
@@ -35,11 +40,14 @@
             //
             // Create instance of class I'm testing:
             //
-            Mock<LunchNotifier_UsingSeam> classUnderTest = null;
+            Mock<LunchNotifier_UsingSeam> classUnderTest = new Mock<LunchNotifier_UsingSeam>(notificationServiceMock.Object, employeeServiceMock.Object, loggerMock.Object) { CallBase = true};
             /*
              * Create a partial mock of the LunchNotifier_UsingSeam class and change the GetDateTime() behavior to return DateTime.Parse(currentTime)
              *
              */
+            classUnderTest.Setup(x => x.GetDateTime())
+               .Returns(DateTime.Parse(currentTime));
+
 
             //
             // Run some logic to test:
@@ -65,6 +73,11 @@
              * Configure mock so that employee is considered working today and gets notifications via email
              *
              */
+            bobMock.Setup(x => x.IsWorkingOnDate(It.IsAny<DateTime>()))
+               .Returns(true);
+
+            bobMock.Setup(x => x.GetNotificationPreference())
+                .Returns(LunchNotifier.NotificationType.Email);
 
 
             var employeeServiceMock = new Mock<IEmployeeService>();
@@ -72,12 +85,15 @@
              * Configure mock so to return employee from above
              *
              */
+            employeeServiceMock.Setup(x => x.GetEmployeesInNewYorkOffice())
+              .Returns(new[] { bobMock.Object });
 
             var notificationServiceMock = new Mock<INotificationService>();
             /*
             * Configure mock so that you can verify a notification was sent via email
             *
             */
+            notificationServiceMock.Setup(x => x.SendEmail(bobMock.Object, It.IsAny<string>()));
 
             //
             // Create instance of class I'm testing:
@@ -98,6 +114,9 @@
             * Add verifications to prove emails notification was sent
             *
             */
+
+            notificationServiceMock.Verify(x => x.SendEmail(bobMock.Object, It.IsAny<string>()), Times.Once);
+            notificationServiceMock.Verify(x => x.SendSlackMessage(bobMock.Object, It.IsAny<string>()), Times.Never);
         }
 
 
@@ -108,18 +127,29 @@
             // Create mocks:
             //
             var loggerMock = new Mock<ILogger>();
+            loggerMock.Setup(x => x.Error(It.IsAny<Exception>()));
+
             /*
             * Configure mock so that you can verify a error was logged
             *
             */
 
             var bobMock = new Mock<IEmployee>();
+            bobMock.Setup(x => x.IsWorkingOnDate(It.IsAny<DateTime>()))
+                .Returns(true);
+            bobMock.Setup(x => x.GetNotificationPreference())
+                .Returns(LunchNotifier.NotificationType.Email);
+
             /*
              * Configure mock so that employee is considered working today and gets notifications via email
              *
              */
 
-            var marthaMock = new Mock<IEmployee>();
+            var marthaMock = new Mock<IEmployee>(); 
+            marthaMock.Setup(x => x.IsWorkingOnDate(It.IsAny<DateTime>()))
+                 .Returns(true);
+            marthaMock.Setup(x => x.GetNotificationPreference())
+                .Returns(LunchNotifier.NotificationType.Email);
             /*
              * Configure mock so that employee is considered working today and gets notifications via email
              *
@@ -131,6 +161,8 @@
              * Configure mock so to return both employees from above
              *
              */
+            employeeServiceMock.Setup(x => x.GetEmployeesInNewYorkOffice())
+              .Returns(new[] { bobMock.Object, marthaMock.Object });
 
 
             var notificationServiceMock = new Mock<INotificationService>();
@@ -138,6 +170,9 @@
              * Configure mock to throw an exception when attempting to send notification via email
              *
              */
+            notificationServiceMock
+             .Setup(x => x.SendEmail(It.IsAny<IEmployee>(), It.IsAny<string>()))
+             .Throws<Exception>();
 
 
             //
@@ -161,6 +196,10 @@
              * Add verification that error logger was called
              *
              */
+
+            notificationServiceMock.Verify(x => x.SendEmail(It.IsAny<IEmployee>(), It.IsAny<string>()), Times.Exactly(2));
+
+            loggerMock.Verify(x => x.Error(It.IsAny<Exception>()), Times.Exactly(2));
         }
     }
 }
